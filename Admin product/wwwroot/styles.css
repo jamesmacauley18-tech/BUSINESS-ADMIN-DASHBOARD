@@ -1,0 +1,203 @@
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#EEE7FA;color:#222}a{color:#7D3AC1}
+.topbar{display:flex;align-items:center;gap:12px;padding:10px 14px;background:#7D3AC1;color:#fff;position:sticky;top:0;z-index:10} .topbar .logo{height:36px}
+.topbar h1{font-size:18px;margin:0;flex:1}
+nav .tab-btn{margin:0 4px;padding:8px 12px;background:#fff;color:#7D3AC1;border:0;border-radius:8px;cursor:pointer}nav .tab-btn:hover{opacity:.9}
+.container{max-width:980px;margin:18px auto;padding:0 12px}
+.card{background:#fff;border-radius:12px;box-shadow:0 4px 16px #00000012;padding:14px;margin-bottom:14px}
+.row{display:flex;gap:10px;align-items:center;margin:8px 0} .row label{width:160px}
+input,select,button{padding:10px;border-radius:8px;border:1px solid #ccc} button{background:#7D3AC1;color:#fff;border:0;cursor:pointer} button:hover{opacity:.95}
+.table{width:100%;border-collapse:collapse;font-size:14px} .table th,.table td{border-bottom:1px solid #eee;padding:8px 6px;text-align:left} .table td .qty{display:flex;align-items:center;gap:6px}
+.footer{text-align:center;padding:20px;color:#666}
+.tab{display:none} .tab.active{display:block}
+.totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;align-items:center}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#f1edff;color:#7D3AC1;font-weight:600}
+.role-pill{margin-left:auto;padding:6px 10px;border-radius:999px;background:#fff;color:#333;font-weight:600}
+
+/* Enhanced Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .topbar {
+    flex-direction: column;
+    padding: 10px;
+    gap: 8px;
+  }
+  
+  .topbar h1 {
+    font-size: 16px;
+    text-align: center;
+  }
+  
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+  }
+  
+  nav .tab-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    margin: 2px;
+  }
+  
+  .container {
+    margin: 10px auto;
+    padding: 0 8px;
+  }
+  
+  .card {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 5px;
+  }
+  
+  .row label {
+    width: auto;
+    font-weight: 600;
+  }
+  
+  input, select, button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  .table {
+    font-size: 12px;
+  }
+  
+  .table th, .table td {
+    padding: 4px;
+  }
+  
+  /* Hide some table columns on small screens */
+  .table th:nth-child(n+6), 
+  .table td:nth-child(n+6) {
+    display: none;
+  }
+  
+  .totals {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .role-pill {
+    margin-left: 0;
+    margin-top: 8px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar h1 {
+    font-size: 14px;
+  }
+  
+  nav .tab-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  
+  .container {
+    padding: 0 5px;
+  }
+  
+  .card {
+    padding: 8px;
+    border-radius: 8px;
+  }
+  
+  /* Even more aggressive table hiding */
+  .table th:nth-child(n+4), 
+  .table td:nth-child(n+4) {
+    display: none;
+  }
+  
+  .table {
+    font-size: 11px;
+  }
+}
+
+/* Touch-friendly buttons */
+@media (hover: none) and (pointer: coarse) {
+  button, .tab-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  nav .tab-btn {
+    padding: 10px 12px;
+  }
+}
+
+/* High DPI screens */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .topbar .logo {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #1a1a1a;
+    color: #e0e0e0;
+  }
+  
+  .card {
+    background: #2d2d2d;
+    color: #e0e0e0;
+  }
+  
+  input, select {
+    background: #3d3d3d;
+    color: #e0e0e0;
+    border-color: #555;
+  }
+  
+  .table th, .table td {
+    border-bottom-color: #444;
+  }
+  
+  .badge {
+    background: #4c4c4c;
+    color: #bb86fc;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus indicators for keyboard navigation */
+button:focus, input:focus, select:focus, .tab-btn:focus {
+  outline: 2px solid #7D3AC1;
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .topbar, nav, button {
+    display: none !important;
+  }
+  
+  .card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+  
+  body {
+    background: white;
+    color: black;
+  }
+}

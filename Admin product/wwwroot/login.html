@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Regimenz Business Admin - Login</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7D3AC1">
+  <link rel="icon" type="image/png" href="assets/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #7D3AC1, #4F46E5);
+      padding: 20px;
+    }
+    .login-card {
+      background: white;
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      width: 100%;
+      max-width: 400px;
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .login-header h1 {
+      color: #1f2937;
+      margin: 10px 0;
+      font-size: 24px;
+    }
+    .login-header p {
+      color: #6b7280;
+      margin: 0;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #374151;
+      font-weight: 500;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 16px;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: #7D3AC1;
+      box-shadow: 0 0 0 3px rgba(125, 58, 193, 0.1);
+    }
+    .btn-primary {
+      width: 100%;
+      background: #7D3AC1;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .btn-primary:hover {
+      background: #6B21A8;
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .alert {
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .alert-error {
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+    .alert-success {
+      background: #f0fdf4;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+    }
+    .role-description {
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <img src="assets/logo.svg" alt="Regimenz logo" style="height: 40px;" onerror="this.style.display='none'"/>
+        <h1>Business Admin Login</h1>
+        <p>Access your business management system</p>
+      </div>
+
+      <div id="alert-container"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username">Username/Employee ID</label>
+          <input type="text" id="username" name="username" required placeholder="Enter your username">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password/PIN</label>
+          <input type="password" id="password" name="password" required placeholder="Enter your password">
+        </div>
+
+        <div class="form-group">
+          <label for="role">Login As</label>
+          <select id="role" name="role" required>
+            <option value="">Select your role</option>
+            <option value="admin">🔑 Admin (Full Access)</option>
+            <option value="cashier">💰 Cashier (POS Access)</option>
+            <option value="worker">👷 Worker (Access Code)</option>
+          </select>
+        </div>
+
+        <div id="role-description" class="role-description" style="display: none;">
+          <div id="admin-desc" style="display: none;">
+            <strong>Admin Access:</strong> Full control over products, sales, staff monitoring, reports, and system settings. Can view all cashier activities in real-time.
+          </div>
+          <div id="cashier-desc" style="display: none;">
+            <strong>Cashier Access:</strong> Limited to POS operations, product scanning, and basic sales functions. Can rate workers. All activities are monitored by admin.
+          </div>
+          <div id="worker-desc" style="display: none;">
+            <strong>Worker Access:</strong> Use the 6-digit access code provided by admin. No password needed. Limited access to basic functions. Rated by cashiers.
+          </div>
+        </div>
+
+        <!-- Worker Code Input (shown only for workers) -->
+        <div id="worker-code-section" class="form-group" style="display: none;">
+          <label for="workerCode">6-Digit Access Code</label>
+          <input type="text" id="workerCode" name="workerCode" placeholder="Enter your 6-digit code" maxlength="6" pattern="[0-9]{6}">
+          <small style="color: #6b7280;">Enter the access code provided by your admin</small>
+        </div>
+
+        <button type="submit" class="btn-primary" id="loginBtn">
+          <span id="loginText">Sign In</span>
+          <span id="loadingText" style="display: none;">Signing in...</span>
+        </button>
+      </form>
+
+      <div style="margin-top: 30px; text-align: center; font-size: 12px; color: #9ca3af;">
+        <p>Secure business management system</p>
+        <p>&copy; 2024 Regimenz Admin. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (q) => document.querySelector(q);
+    const showAlert = (message, type = 'error') => {
+      const container = $('#alert-container');
+      container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+      setTimeout(() => container.innerHTML = '', 5000);
+    };
+
+    // Role selection handler
+    $('#role').addEventListener('change', (e) => {
+      const roleDesc = $('#role-description');
+      const workerCodeSection = $('#worker-code-section');
+      const usernameGroup = $('#username').closest('.form-group');
+      const passwordGroup = $('#password').closest('.form-group');
+      
+      if (e.target.value === 'admin') {
+        $('#admin-desc').style.display = 'block';
+        $('#cashier-desc').style.display = 'none';
+        $('#worker-desc').style.display = 'none';
+        roleDesc.style.display = 'block';
+        workerCodeSection.style.display = 'none';
+        usernameGroup.style.display = 'block';
+        passwordGroup.style.display = 'block';
+      } else if (e.target.value === 'cashier') {
+        $('#admin-desc').style.display = 'none';
+        $('#cashier-desc').style.display = 'block';
+        $('#worker-desc').style.display = 'none';
+        roleDesc.style.display = 'block';
+        workerCodeSection.style.display = 'none';
+        usernameGroup.style.display = 'block';
+        passwordGroup.style.display = 'block';
+      } else if (e.target.value === 'worker') {
+        $('#admin-desc').style.display = 'none';
+        $('#cashier-desc').style.display = 'none';
+        $('#worker-desc').style.display = 'block';
+        roleDesc.style.display = 'block';
+        workerCodeSection.style.display = 'block';
+        usernameGroup.style.display = 'none';
+        passwordGroup.style.display = 'none';
+      } else {
+        roleDesc.style.display = 'none';
+        workerCodeSection.style.display = 'none';
+        usernameGroup.style.display = 'block';
+        passwordGroup.style.display = 'block';
+      }
+    });    // Login form handler
+    $('#loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const username = $('#username').value.trim();
+      const password = $('#password').value.trim();
+      const role = $('#role').value;
+      const workerCode = $('#workerCode').value?.trim();
+      
+      const loginBtn = $('#loginBtn');
+      const loginText = $('#loginText');
+      const loadingText = $('#loadingText');
+      
+      loginBtn.disabled = true;
+      loginText.style.display = 'none';
+      loadingText.style.display = 'inline';
+
+      try {
+        if (role === 'worker') {
+          // Validate worker code
+          if (!workerCode || workerCode.length !== 6) {
+            showAlert('Please enter a valid 6-digit access code');
+            return;
+          }
+          
+          const workerCodes = JSON.parse(localStorage.getItem('worker_codes') || '[]');
+          const validCode = workerCodes.find(code => 
+            code.code === workerCode && 
+            code.isActive && 
+            new Date(code.expiresAt) > new Date()
+          );
+          
+          if (!validCode) {
+            showAlert('Invalid or expired access code. Please contact admin.');
+            return;
+          }
+          
+          // Mark code as used and create worker session
+          validCode.usedAt = new Date().toISOString();
+          localStorage.setItem('worker_codes', JSON.stringify(workerCodes));
+          
+          const token = 'worker_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+          localStorage.setItem('reg_auth_token', token);
+          localStorage.setItem('reg_user_role', 'worker');
+          localStorage.setItem('reg_username', validCode.name);
+          localStorage.setItem('reg_worker_shift', validCode.shift);
+          localStorage.setItem('reg_login_time', new Date().toISOString());
+
+          showAlert('Welcome ' + validCode.name + '! Redirecting...', 'success');
+          
+          setTimeout(() => {
+            window.location.href = '/worker-dashboard.html';
+          }, 1500);
+          
+        } else {
+          // Regular admin/cashier login
+          if (!username || !password) {
+            showAlert('Please fill in all fields');
+            return;
+          }
+          
+          const validLogins = {
+            'admin': { password: 'admin123', role: 'admin' },
+            'cashier1': { password: 'cash123', role: 'cashier' },
+            'cashier2': { password: 'cash123', role: 'cashier' },
+            'cashier': { password: 'cash123', role: 'cashier' }
+          };
+
+          const userInfo = validLogins[username.toLowerCase()];
+          
+          if (userInfo && userInfo.password === password && userInfo.role === role) {
+            // Store authentication data
+            const token = 'token_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('reg_auth_token', token);
+            localStorage.setItem('reg_user_role', userInfo.role);
+            localStorage.setItem('reg_username', username);
+            localStorage.setItem('reg_login_time', new Date().toISOString());
+
+            showAlert('Login successful! Redirecting...', 'success');
+            
+            // Redirect based on role
+            setTimeout(() => {
+              if (userInfo.role === 'admin') {
+                window.location.href = '/admin-dashboard.html';
+              } else {
+                window.location.href = '/cashier-pos.html';
+              }
+            }, 1500);
+          } else {
+            showAlert('Invalid credentials. Please try again.');
+          }
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        showAlert('Login error. Please try again.');
+      } finally {
+        loginBtn.disabled = false;
+        loginText.style.display = 'inline';
+        loadingText.style.display = 'none';
+      }
+    });
+
+    // Check if already logged in
+    const token = localStorage.getItem('reg_auth_token');
+    const role = localStorage.getItem('reg_user_role');
+    if (token && role) {
+      if (role === 'admin') {
+        window.location.href = '/admin-dashboard.html';
+      } else {
+        window.location.href = '/cashier-pos.html';
+      }
+    }
+  </script>
+</body>
+</html>
