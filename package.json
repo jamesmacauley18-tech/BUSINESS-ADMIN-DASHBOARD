@@ -1,0 +1,19 @@
+{
+  "name": "business-admin-system",
+  "version": "1.0.0",
+  "description": "Standalone Business Admin System with POS and Real-time Monitoring",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "build": "echo 'Static site ready for deployment'",
+    "deploy": "echo 'Upload to your hosting provider'"
+  },
+  "keywords": ["business", "admin", "pos", "inventory", "monitoring"],
+  "author": "Business Owner",
+  "license": "MIT",
+  "homepage": ".",
+  "repository": {
+    "type": "git",
+    "url": "."
+  }
+}

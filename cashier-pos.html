@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Cashier POS - Regimenz Business</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7D3AC1">
+  <link rel="icon" type="image/png" href="assets/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .pos-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      height: calc(100vh - 80px);
+    }
+    .pos-main {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .pos-sidebar {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      overflow-y: auto;
+    }
+    .barcode-input {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .barcode-input input {
+      flex: 1;
+      padding: 15px;
+      font-size: 18px;
+      border: 2px solid #d1d5db;
+      border-radius: 8px;
+    }
+    .barcode-input input:focus {
+      border-color: #7D3AC1;
+      outline: none;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      border-bottom: 1px solid #e5e7eb;
+      background: #f9fafb;
+      margin-bottom: 8px;
+      border-radius: 6px;
+    }
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+    .cart-item-info {
+      flex: 1;
+    }
+    .cart-item-name {
+      font-weight: 600;
+      color: #1f2937;
+    }
+    .cart-item-sku {
+      font-size: 12px;
+      color: #6b7280;
+    }
+    .cart-item-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .qty-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .qty-btn {
+      width: 30px;
+      height: 30px;
+      border: 1px solid #d1d5db;
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    .qty-btn:hover {
+      background: #f3f4f6;
+    }
+    .total-section {
+      background: #f8fafc;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .total-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding: 5px 0;
+    }
+    .total-line.grand-total {
+      font-size: 20px;
+      font-weight: bold;
+      border-top: 2px solid #d1d5db;
+      padding-top: 15px;
+      margin-top: 15px;
+    }
+    .checkout-btn {
+      width: 100%;
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 20px;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: background-color 0.2s;
+    }
+    .checkout-btn:hover:not(:disabled) {
+      background: #059669;
+    }
+    .checkout-btn:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .product-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .product-card:hover {
+      border-color: #7D3AC1;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .product-card h4 {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+      color: #1f2937;
+    }
+    .product-card .price {
+      font-weight: bold;
+      color: #7D3AC1;
+      font-size: 16px;
+    }
+    .product-card .stock {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+    .status-bar {
+      background: #7D3AC1;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+    }
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: pulse 2s infinite;
+      margin-right: 8px;
+    }
+    .camera-scanner {
+      background: #f0fdf4;
+      border: 2px dashed #22c55e;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+    .camera-scanner.active {
+      border-color: #16a34a;
+      background: #dcfce7;
+    }
+    @media (max-width: 1024px) {
+      .pos-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+      .pos-sidebar {
+        order: -1;
+        max-height: 300px;
+      }
+    }
+    @media (max-width: 768px) {
+      .pos-layout {
+        gap: 10px;
+      }
+      .pos-main, .pos-sidebar {
+        padding: 15px;
+      }
+      .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="status-bar">
+    <div style="display: flex; align-items: center;">
+      <span class="status-indicator"></span>
+      <span>Connected</span>
+      <span style="margin-left: 20px;">Cashier: <span id="cashierName">Loading...</span></span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 15px;">
+      <span id="currentTime"></span>
+      <button class="btn btn-sm" id="logoutBtn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">Logout</button>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div style="display: flex; align-items: center; gap: 15px;">
+      <img src="assets/logo.svg" alt="Regimenz logo" class="logo" onerror="this.style.display='none'"/>
+      <h1>Point of Sale</h1>
+    </div>
+    <nav>
+      <button class="tab-btn active" data-tab="pos">Sales</button>
+      <button class="tab-btn" data-tab="products">Products</button>
+      <button class="tab-btn" data-tab="history">Sales History</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- POS Section -->
+    <section id="pos" class="tab active">
+      <div class="pos-layout">
+        <div class="pos-main">
+          <div class="camera-scanner" id="cameraScanner">
+            <h3>📱 Quick Barcode Scanner</h3>
+            <p>Click to activate camera for barcode scanning</p>
+            <button class="btn btn-primary" id="startScannerBtn">Start Scanner</button>
+          </div>
+
+          <div class="barcode-input">
+            <input type="text" id="barcodeInput" placeholder="Scan or enter barcode/SKU..." autofocus>
+            <button class="btn btn-primary" id="addItemBtn">Add Item</button>
+            <button class="btn btn-secondary" id="clearCartBtn">Clear Cart</button>
+          </div>
+
+          <div class="product-grid" id="productGrid">
+            <div style="grid-column: 1/-1; text-align: center; color: #6b7280; padding: 40px;">
+              Loading products...
+            </div>
+          </div>
+        </div>
+
+        <div class="pos-sidebar">
+          <h3>Current Sale</h3>
+          <div id="cartItems">
+            <div style="text-align: center; color: #6b7280; padding: 20px;">
+              Cart is empty
+            </div>
+          </div>
+
+          <div class="total-section">
+            <div class="total-line">
+              <span>Subtotal:</span>
+              <span id="subtotal">$0.00</span>
+            </div>
+            <div class="total-line">
+              <span>Tax:</span>
+              <span id="tax">$0.00</span>
+            </div>
+            <div class="total-line grand-total">
+              <span>Total:</span>
+              <span id="grandTotal">$0.00</span>
+            </div>
+            
+            <button class="checkout-btn" id="checkoutBtn" disabled>
+              Complete Sale
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="tab">
+      <h2>Product Catalog</h2>
+      <div class="card">
+        <input type="text" id="productSearch" placeholder="Search products..." style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #d1d5db; border-radius: 6px;">
+        <div id="productCatalog" class="product-grid">
+          <div style="grid-column: 1/-1; text-align: center; color: #6b7280; padding: 40px;">
+            Loading product catalog...
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sales History Section -->
+    <section id="history" class="tab">
+      <h2>Today's Sales History</h2>
+      <div class="card">
+        <div id="salesHistory">
+          <div style="text-align: center; color: #6b7280; padding: 40px;">
+            Loading sales history...
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Camera Modal -->
+  <div id="cameraModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 8px; padding: 20px; max-width: 500px; width: 90%;">
+      <h3>Barcode Scanner</h3>
+      <video id="cameraVideo" style="width: 100%; height: 300px; background: #000; border-radius: 6px;" autoplay playsinline></video>
+      <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
+        <button class="btn btn-success" id="captureBtn">Capture</button>
+        <button class="btn btn-danger" id="closeCameraBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="cashier-pos-standalone.js"></script>
+</body>
+</html>

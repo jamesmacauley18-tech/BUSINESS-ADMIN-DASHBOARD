@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Business Admin System</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7D3AC1">
+  <link rel="icon" type="image/png" href="assets/icon-192.png">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #7D3AC1, #4F46E5);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+    .welcome-container {
+      text-align: center;
+      max-width: 500px;
+      padding: 40px;
+    }
+    .logo {
+      width: 200px;
+      height: auto;
+      margin-bottom: 30px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+    .btn {
+      background: white;
+      color: #7D3AC1;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: transform 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+    .loading {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+    .features {
+      margin-top: 40px;
+      text-align: left;
+      max-width: 400px;
+    }
+    .feature {
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 6px;
+    }
+    @media (max-width: 768px) {
+      h1 { font-size: 2rem; }
+      p { font-size: 1rem; }
+      .welcome-container { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="welcome-container">
+    <img src="assets/logo.svg" alt="Business Logo" class="logo" onerror="this.style.display='none'"/>
+    <h1>Welcome to Your Business Admin System</h1>
+    <p>Manage your business operations, monitor sales, and track inventory with our comprehensive admin platform.</p>
+    
+    <div class="features">
+      <div class="feature">✅ <strong>Admin Dashboard</strong> - Full business control & monitoring</div>
+      <div class="feature">🛒 <strong>Cashier POS</strong> - Easy point of sale system</div>
+      <div class="feature">📱 <strong>Mobile Ready</strong> - Works on phones & tablets</div>
+      <div class="feature">📊 <strong>Real-time Monitoring</strong> - See all activities live</div>
+    </div>
+    
+    <br>
+    <a href="login.html" class="btn">Access System</a>
+    <div class="loading">Loading business management system...</div>
+  </div>
+
+  <script>
+    // Auto-redirect to login after 3 seconds
+    setTimeout(() => {
+      window.location.href = 'login.html';
+    }, 3000);
+  </script>
+</body>
+</html>
